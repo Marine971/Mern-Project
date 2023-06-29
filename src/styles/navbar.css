@@ -1,0 +1,75 @@
+/* Navbar.css */
+
+.navbar {
+    background-color: #333;
+    color: #fff;
+    padding: 10px;
+}
+
+.navbar .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.navbar .logo {
+    font-size: 24px;
+    font-weight: bold;
+    margin-right: 20px;
+    color: #fff;
+    text-decoration: none;
+}
+
+.navbar ul.nav-menu {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+}
+
+.navbar ul.nav-menu li {
+    margin-right: 10px;
+}
+
+.navbar ul.nav-menu li a {
+    color: #fff;
+    text-decoration: none;
+    padding: 5px;
+}
+
+.navbar ul.nav-menu li a:hover {
+    background-color: #555;
+}
+
+.navbar .cart {
+    position: relative;
+}
+
+.navbar .cart-count {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: #ff0000;
+    color: #fff;
+    font-size: 12px;
+    padding: 2px 5px;
+    border-radius: 50%;
+}
+
+.navbar .user {
+    display: flex;
+    align-items: center;
+}
+
+.navbar .user-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.navbar .user-name {
+    font-size: 16px;
+    color: #fff;
+}
