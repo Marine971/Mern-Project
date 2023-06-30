@@ -11,10 +11,6 @@ function HomePage() {
         backgroundColor: '#f2f2f2',
     };
 
-
-
-
-
     return (
 
         <div style={pageStyle}>

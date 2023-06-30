@@ -1,0 +1,66 @@
+.admin-users {
+    margin: 20px;
+}
+
+.admin-users__title {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.admin-users__success-message {
+    color: green;
+    margin-bottom: 10px;
+}
+
+.admin-users__list {
+    list-style: none;
+    padding: 0;
+}
+
+.admin-users__item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #ccc;
+    padding: 10px 0;
+}
+
+.admin-users__info {
+    font-weight: bold;
+}
+
+.admin-users__actions button {
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+.admin-users__form {
+    margin-top: 20px;
+}
+
+.admin-users__form-title {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.admin-users__form-group {
+    margin-bottom: 10px;
+}
+
+.admin-users__form-label {
+    display: block;
+    font-weight: bold;
+}
+
+.admin-users__form-input {
+    width: 100%;
+    padding: 5px;
+}
+
+.admin-users__form-submit {
+    padding: 5px 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+}

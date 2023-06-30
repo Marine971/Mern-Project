@@ -4,3 +4,7 @@
 @import 'RegistrationPage.css';
 @import 'Products.css';
 @import 'SearchBar.css';
+@import 'LogoutPage.css';
+@import 'Panier.css';
+@import 'admin/AdminProductsPage.css';
+@import 'admin/AdminUsersPage.css';

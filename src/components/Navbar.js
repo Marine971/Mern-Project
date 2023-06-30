@@ -1,8 +1,7 @@
 import { Link } from 'react-router-dom';
 
 function Navbar() {
-    const isLoggedIn = false;
-    // Vous pouvez ajouter la logique pour vérifier l'état de connexion de l'utilisateur et mettre à jour la variable isLoggedIn
+    const isLoggedIn = localStorage.getItem('token') !== null;
 
     return (
         <nav className="navbar">
@@ -11,21 +10,21 @@ function Navbar() {
 
                 <ul className="nav-menu">
                     <li><Link to="/">Accueil</Link></li>
-                    <li><Link to="/Products">Produits</Link></li>
-                    <li><Link to="/panier" className="cart">Panier<span className="cart-count">3</span></Link></li>
+                    <li><Link to="/products">Produits</Link></li>
+                    {isLoggedIn ? (<li><Link to="/panier" className="cart">Panier</Link></li>) : null}
                 </ul>
 
                 <div className="user">
                     {isLoggedIn ? (
-                        <>
-                            <img src="/path/to/user-avatar.png" alt="User Avatar" className="user-avatar" />
-                            <span className="user-name">John Doe</span>
-                        </>
+                        <li>
+                            <img src="https://res.cloudinary.com/dyaml7gmu/image/upload/v1688060211/5856_hb57ii.jpg" alt="User Avatar" className="user-avatar" />
+                            <Link to="/profile" className="user-link">My profil</Link>
+                        </li>
                     ) : (
-                        <>
-                            <Link to="/LoginPage" className="user-link">Connexion</Link>
-                            <Link to="/RegistrationPage" className="user-link">Inscription</Link>
-                        </>
+                        <li>
+                            <Link to="/login" className="user-link">Connexion</Link>
+                            <Link to="/signin" className="user-link">Inscription</Link>
+                        </li>
                     )}
                 </div>
             </div>

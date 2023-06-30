@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 function LoginPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [successMessage, setSuccessMessage] = useState('');
+    const navigate = useNavigate();
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -14,12 +17,13 @@ function LoginPage() {
         };
 
         try {
-            const response = await axios.post('http://localhost:3000/login', formData);
-            console.log(response.data);
-            // Afficher un message de succès ou rediriger l'utilisateur vers une autre page
+            const response = await axios.post('http://localhost:3000/signin', formData);
+            const token = response.data.token;
+            localStorage.setItem('token', token);
+            setSuccessMessage(response.data.message);
+            navigate('/profile'); // Redirect to /profile
         } catch (error) {
             console.error(error);
-            // Afficher un message d'erreur à l'utilisateur
         }
     };
 
@@ -27,6 +31,7 @@ function LoginPage() {
         <div className="login-page">
             <div className="login-form-container">
                 <h2>Connexion</h2>
+                {successMessage && <p className="success-message">{successMessage}</p>}
                 <form onSubmit={handleLogin}>
                     <div className="form-group">
                         <label htmlFor="email">Email :</label>

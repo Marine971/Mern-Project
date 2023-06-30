@@ -1,0 +1,77 @@
+.admin-products {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.admin-products__title {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.admin-products__list {
+    list-style: none;
+    padding: 0;
+}
+
+.admin-products__item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.admin-products__info {
+    font-size: 16px;
+}
+
+.admin-products__actions {
+    display: flex;
+    gap: 10px;
+}
+
+.admin-products__delete-button {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.admin-products__form {
+    margin-top: 20px;
+}
+
+.admin-products__form-title {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.admin-products__form-group {
+    margin-bottom: 10px;
+}
+
+.admin-products__form-label {
+    display: block;
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+
+.admin-products__form-input,
+.admin-products__form-textarea {
+    width: 100%;
+    padding: 5px;
+    font-size: 14px;
+}
+
+.admin-products__form-submit {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+.admin-products__success-message {
+    color: green;
+    margin-bottom: 10px;
+}

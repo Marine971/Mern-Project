@@ -21,6 +21,10 @@ const productSchema = new mongoose.Schema({
     imageUrl: {
         type: String,
         required: true
+    },
+    quantity: {
+        type: Number,
+        required: true
     }
 },
     { collection : 'Products'}

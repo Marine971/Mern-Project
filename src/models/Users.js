@@ -22,6 +22,10 @@ const userSchema = new mongoose.Schema(
         password: {
             type: String,
             required: true
+        },
+        isAdmin: {
+            type: Boolean,
+            required: false,
         }
     },
     { collection: 'Users' } // Spécifiez le nom de la collection ici

@@ -1,0 +1,34 @@
+.panier-container {
+    margin: 20px;
+    padding: 20px;
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.panier-items {
+    list-style: none;
+    padding: 0;
+}
+
+.panier-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.panier-item-name {
+    font-weight: bold;
+}
+
+.panier-item-quantity {
+    color: #888;
+}
+
+.panier-total {
+    font-weight: bold;
+    text-align: right;
+    margin-top: 10px;
+}

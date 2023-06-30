@@ -6,13 +6,16 @@ const port = 3000;
 const Users = require('../models/Users.js');
 const cors = require('cors');
 const Products = require("../models/Products.js");
+const jwt = require('jsonwebtoken');
+const {ObjectId} = require("mongodb");
+require('dotenv').config();
 
-app.use(express.json()); // Middleware pour parser le corps des requêtes en tant que JSON
-app.use(cors()); // Autoriser les requêtes cross-origin
+app.use(express.json());
+app.use(cors());
 
-// Configuration du middleware de session
+
 app.use(session({
-    secret: 'your-secret-key',
+    secret: 'key',
     resave: false,
     saveUninitialized: false
 }));
@@ -32,7 +35,6 @@ mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
         console.error('Error connecting to MongoDB', err);
     });
 
-// Route principale ("/")
 app.get('/', (req, res) => {
     res.send('Hello World!');
 });
@@ -40,7 +42,7 @@ app.get('/', (req, res) => {
 app.post('/register', (req, res) => {
     const { firstName, lastName, phone, email, password } = req.body;
 
-    // Créez une nouvelle instance du modèle User avec les données d'inscription
+    // Crée une nouvelle instance du modèle User avec les données d'inscription
     const newUsers = new Users({
         firstName,
         lastName,
@@ -50,7 +52,7 @@ app.post('/register', (req, res) => {
     });
     console.log(newUsers)
 
-    // Enregistrez l'utilisateur dans la base de données
+    // Enregistre l'utilisateur dans la base de données
     newUsers.save()
         .then(() => {
             res.status(201).json({ message: 'User registered successfully' });
@@ -59,31 +61,29 @@ app.post('/register', (req, res) => {
             res.status(500).json({ error: 'Failed to register user' });
         });
 });
-
-app.post('/login', (req, res) => {
+const jwtSecret = 'key';
+app.post('/signin', (req, res) => {
     const { email, password } = req.body;
 
-    // Recherchez l'utilisateur dans la base de données par son email
-    Users.findOne({ email })
+    Users.findOne({ email, password })
         .then((user) => {
             if (!user) {
-                // Si l'utilisateur n'est pas trouvé, renvoyer une réponse d'erreur
                 res.status(404).json({ error: 'User not found' });
             } else {
-                // Vérifiez si le mot de passe correspond
-                if (user.password === password) {
-                    // Stockez l'utilisateur dans la session
-                    req.session.user = user;
-                    res.status(200).json({ message: 'Login successful' });
-                } else {
-                    res.status(401).json({ error: 'Invalid password' });
-                }
+                const token = jwt.sign({ userId: user._id }, jwtSecret);
+                req.session.isAdmin = user.isAdmin; // Stocker la variable isAdmin dans la session
+
+
+                res.status(200).json({ message: 'Signin successful', token });
             }
         })
         .catch((error) => {
-            res.status(500).json({ error: 'Failed to login' });
+            res.status(500).json({ error: 'Failed to signin' });
         });
 });
+
+/*********************  Products  ***********************/
+
 
 app.get('/products', (req, res) => {
     Products.find()
@@ -107,9 +107,176 @@ app.get('/products/:id', (req, res) => {
         });
 
 });
+app.put('/products/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { name, category, price, description, imageUrl, quantity } = req.body;
+        const updatedProduct = await Products.findByIdAndUpdate(
+            id,
+            {
+                name,
+                category,
+                price,
+                description,
+                imageUrl,
+                quantity,
+            },
+            { new: true }
+        );
+        res.json(updatedProduct);
+    } catch (error) {
+        console.error('Error updating product:', error);
+        res.status(500).json({ error: 'Error updating product' });
+    }
+});
+
+app.get('/profile', (req, res) => {
+    const token = req.headers.authorization;
+    console.log(token)
+    if (!token) {
+        res.status(401).json({ error: 'Unauthorized' });
+    } else {
+        try {
+            const decoded = jwt.verify(token, jwtSecret);
+
+            const userId = decoded.userId;
+            Users.findById(userId)
+                .then((user) => {
+                    if (!user) {
+                        res.status(404).json({ error: 'User not found' });
+                    } else {
+                        res.status(200).json({ message: 'Profile information', user });
+                    }
+                })
+                .catch((error) => {
+                    res.status(500).json({ error: 'Failed to fetch profile' });
+                });
+        } catch (error) {
+            res.status(401).json({ error: 'Invalid token' });
+        }
+    }
+});
+
+app.post('/products', async (req, res) => {
+    try {
+        const newProduct = req.body;
+
+        await Products.create(newProduct);
+
+        res.status(200).json({ message: 'Product added successfully' });
+    } catch (error) {
+        console.error('Failed to add product:', error);
+        res.status(500).json({ error: 'Failed to add product' });
+    }
+});
 
 
+app.delete('/products/:productId', (req, res) => {
+    const productId = req.params.productId;
 
-// Autres routes et logique de l'application...
+    // Effectuer les opérations nécessaires pour supprimer le produit avec l'ID donné
+    Products.findOneAndDelete({ _id: productId })
+        .then((deletedProduct) => {
+            if (deletedProduct) {
+                res.status(200).json({ message: 'Product deleted successfully' });
+            } else {
+                res.status(404).json({ error: 'Product not found' });
+            }
+        })
+        .catch((error) => {
+            res.status(500).json({ error: 'Failed to delete product' });
+        });
+});
+
+app.put('/products/:productId', (req, res) => {
+    const productId = req.params.productId;
+    const quantity = req.body.quantity;
+
+
+    const updatedProduct = {
+        id: productId,
+        quantity: quantity,
+    };
+
+    res.json(updatedProduct);
+});
+
+/*********************  Users  ***********************/
+
+app.get('/users', async (req, res) => {
+    try {
+        const users = await Users.find();
+        res.json(users);
+    } catch (error) {
+        console.error('Error fetching users:', error);
+        res.status(500).json({ error: 'An error occurred while fetching users' });
+    }
+});
+
+
+app.get('/users/:id', async (req, res) => {
+    try {
+        const id = req.params.id;
+        const user = await Users.findById(id);
+        if (user) {
+            res.json(user);
+        } else {
+            res.status(404).json({ error: 'User not found' });
+        }
+    } catch (error) {
+        console.error('Error fetching user:', error);
+        res.status(500).json({ error: 'An error occurred while fetching the user' });
+    }
+});
+
+
+app.delete('/users/:id', async (req, res) => {
+    try {
+        const id = req.params.id;
+        const user = await Users.findByIdAndDelete(id);
+        if (user) {
+            res.json({ message: 'User deleted successfully' });
+        } else {
+            res.status(404).json({ error: 'User not found' });
+        }
+    } catch (error) {
+        console.error('Error deleting user:', error);
+        res.status(500).json({ error: 'An error occurred while deleting the user' });
+    }
+});
+
+app.put('/users/:id', async (req, res) => {
+    try {
+        const id = req.params.id;
+        const { name, email } = req.body;
+
+        const updatedUser = await Users.findByIdAndUpdate(id, { name, email }, { new: true });
+        if (updatedUser) {
+            res.json(updatedUser);
+        } else {
+            res.status(404).json({ error: 'User not found' });
+        }
+    } catch (error) {
+        console.error('Error updating user:', error);
+        res.status(500).json({ error: 'An error occurred while updating the user' });
+    }
+});app.post('/users', async (req, res) => {
+    try {
+        const { firstName, email, lastName } = req.body;
+
+        const defaultPassword = 'password123';
+        const defaultPhone = '11111111'
+
+        // Créer un nouvel utilisateur avec le nom, l'email et le mot de passe par défaut
+        const newUser = await Users.create({ firstName, email, lastName, phone : defaultPhone, password: defaultPassword });
+        console.log(newUser)
+        res.status(200).json({ message: 'User added successfully', newUser });
+    } catch (error) {
+        console.error('Failed to add user:', error);
+        res.status(500).json({ error: 'Failed to add user' });
+    }
+});
+
+
 
 module.exports = app;

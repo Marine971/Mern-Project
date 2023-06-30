@@ -2,7 +2,6 @@ import React from 'react';
 import axios from 'axios';
 
 function RegistrationPage() {
-    // Fonction pour gérer la soumission du formulaire d'inscription
     const handleRegistration = async (e) => {
         e.preventDefault();
 
@@ -17,10 +16,8 @@ function RegistrationPage() {
         try {
             const response = await axios.post('http://localhost:3000/register', formData);
             console.log(response.data);
-            // Afficher un message de succès ou rediriger l'utilisateur vers une autre page
         } catch (error) {
             console.error(error);
-            // Afficher un message d'erreur à l'utilisateur
         }
     };
 
