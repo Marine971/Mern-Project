@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import SearchBar from '../SearchBar';
 
 function AdminUsersPage() {
     const [users, setUsers] = useState([]);
+    const [filteredUsers, setFilteredUsers] = useState([]);
     const [newUser, setNewUser] = useState({
         name: '',
         email: '',
@@ -86,6 +88,13 @@ function AdminUsersPage() {
         }
     };
 
+    const handleSearch = (searchQuery) => {
+        const filteredUsers = users.filter(user =>
+            user.email.includes(searchQuery)
+        );
+        setFilteredUsers(filteredUsers);
+    };
+
     const handleChange = (event) => {
         setNewUser({
             ...newUser,
@@ -97,8 +106,11 @@ function AdminUsersPage() {
         <div className="admin-users">
             <h2 className="admin-users__title">Administration des utilisateurs</h2>
             {successMessage && <p className="admin-users__success-message">{successMessage}</p>}
+
+            <SearchBar onSearch={handleSearch} />
+
             <ul className="admin-users__list">
-                {users.map((user) => (
+                {(filteredUsers.length > 0 ? filteredUsers : users).map((user) => (
                     <li key={user._id} className="admin-users__item">
                         <div className="admin-users__info">
                             {user.name} - {user.email}
@@ -129,7 +141,7 @@ function AdminUsersPage() {
                     {editUserId ? 'Modifier l\'utilisateur' : 'Ajouter un nouvel utilisateur'}
                 </h3>
                 <div className="admin-users__form-group">
-                    <label className="admin-users__form-label">Prenom:</label>
+                    <label className="admin-users__form-label">Prénom:</label>
                     <input
                         className="admin-users__form-input"
                         type="text"
